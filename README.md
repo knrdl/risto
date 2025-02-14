@@ -23,6 +23,6 @@ services:
       - 8080:8080
     volumes:
       - ./data:/data  # see data folder for examples
-    cpus: 1s
+    cpus: 1
     mem_limit: 250mb
 ```
