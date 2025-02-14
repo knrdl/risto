@@ -1,7 +1,7 @@
 {
   "name": "Risto",
   "short_name": "Risto",
-  "theme_color": "#919191",
+  "theme_color": "#ebe3d0",
   "background_color": "#ccc",
   "display": "standalone",
   "Scope": "/",
