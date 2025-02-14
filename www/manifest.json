@@ -1,0 +1,16 @@
+{
+  "name": "Risto",
+  "short_name": "Risto",
+  "theme_color": "#919191",
+  "background_color": "#ccc",
+  "display": "standalone",
+  "Scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "images/logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

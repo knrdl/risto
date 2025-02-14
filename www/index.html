@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Risto</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Risto">
+    <meta name="theme-color" content="#919191">
+
+    <link rel="shortcut icon" href="images/logo-transparent.png" type="image/png">
+    <link rel="apple-touch-icon" sizes="512x512" href="images/logo-512x512.png" type="image/png">
+
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials" />
+
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            text-rendering: optimizeLegibility;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overscroll-behavior: none;
+        }
+
+        html {
+            font-family: sans-serif;
+        }
+
+        .noselect {
+            user-select: none;
+        }
+
+        body {
+            background: radial-gradient(circle, rgba(230, 238, 174, 1) 0%, rgba(148, 188, 233, 1) 100%);
+            min-height: 100vh;
+        }
+
+        main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        article {
+            background: rgba(250, 240, 230, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(9px);
+            -webkit-backdrop-filter: blur(9.2px);
+            border: 1px solid rgba(0, 0, 0, 0.78);
+            padding: 1rem;
+            max-width: 100vw;
+        }
+
+        @media screen and (min-width: 30rem) {
+            article {
+                margin: 1rem 5rem;
+                border-radius: 16px;
+            }
+        }
+
+        @media screen and (min-width: 60rem) {
+            article {
+                max-width: 80rem;
+                margin: 3rem 5rem;
+                border-radius: 16px;
+            }
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        header img {
+            max-width: 10rem;
+        }
+
+        input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: large;
+            padding: .25rem;
+            margin: .5rem 0 .5rem .25rem;
+            background: transparent;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+        }
+
+        button:not(:disabled) {
+            cursor: pointer;
+        }
+
+        #listitems,
+        #favitems {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #listitems li {
+            border-bottom: 1px solid #6666;
+            overflow: hidden;
+        }
+
+        #listitems button {
+            color: #111;
+            padding: 1rem .5rem;
+            width: 100%;
+            word-break: break-all;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            font-size: 12pt;
+            transition: opacity 333ms ease-in-out;
+            opacity: 1;
+        }
+
+        #listitems button.fade-out {
+            opacity: 0;
+        }
+
+        #listitems .emoji {
+            font-size: 18pt;
+            min-width: 1.75rem;
+        }
+
+        #favitems {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        #favitems button {
+            width: 120px;
+            height: 66px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: none;
+            text-align: center;
+        }
+
+        #favitems button.selected {
+            background: radial-gradient(closest-side, transparent 0%, #6666 80%, transparent 100%);
+        }
+
+        #favitems .emoji {
+            text-align: center;
+            font-size: 17pt;
+        }
+
+        #favitems .name,
+        #listitems .name {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        #reload:hover {
+            transform: scale(1.5);
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg) scale(1);
+            }
+
+            to {
+                transform: rotate(360deg) scale(1.5);
+            }
+        }
+
+        #reload.spin {
+            animation: spin 1s cubic-bezier(.55, .06, .68, .19) normal;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <article>
+            <header>
+                <img src="images/logo-transparent.png" alt="Risto" />
+                <aside>
+                    <button type="button" onclick="loadItemsAnimated()" id="reload" class="noselect">
+                        🗘
+                    </button>
+                </aside>
+            </header>
+            <section>
+                <template id="listitem-template">
+                    <li>
+                        <button type="button" class="noselect">
+                            <div class="emoji"></div>
+                            <div class="name"></div>
+                        </button>
+                    </li>
+                </template>
+                <ul id="listitems">
+
+                </ul>
+            </section>
+            <section>
+                <form onsubmit="addItemFromInput(event)">
+                    <input type="text" name="itemname" list="datalist1" required placeholder="🖉 add item" />
+                    <datalist id="datalist1">
+                    </datalist>
+                </form>
+            </section>
+            <section>
+                <template id="favitem-template">
+                    <li>
+                        <button type="button" class="noselect">
+                            <div class="emoji"></div>
+                            <div class="name"></div>
+                        </button>
+                    </li>
+                </template>
+                <ul id="favitems">
+                </ul>
+            </section>
+        </article>
+    </main>
+</body>
+
+<script>
+    /**
+     * @type {Record<string, string>} name -> emoji
+     */
+    let favoriteItems = {}
+    /**
+     * @type {string[]}
+     */
+    let listItems = []
+
+    async function loadFavorites() {
+        const res = await fetch('favorites')
+        if (!res.ok) alert(await res.text())
+        else {
+            favoriteItems = await res.json()
+        }
+    }
+    async function loadItemsAnimated() {
+        document.getElementById('reload').classList.add('spin')
+        setTimeout(() => { document.getElementById('reload').classList.remove('spin') }, 1000)
+        await loadItems()
+        renderListItems()
+        renderFavItems()
+    }
+    async function loadItems() {
+        const res = await fetch('items')
+        if (!res.ok) alert(await res.text())
+        else {
+            listItems = (await res.text()).split(/\r?\n/).filter(itm => !!itm)
+        }
+
+    }
+
+    function mapToEmoji(name) {
+        const randomEmojis = ['🦕', '🦖', '👉', '❓', '🐥', '🦆', '🐈', '🐢', '🎉', '⭐️', '📦', '🥫']
+        const generatedIdx = name.split('').reduce((carry, item) => carry + item.toLowerCase().charCodeAt(0), 0)
+        return randomEmojis[generatedIdx % randomEmojis.length]
+    }
+
+    function renderListItems() {
+        const itemTemplate = document.getElementById("listitem-template").content
+        const itemsList = document.getElementById('listitems')
+
+        itemsList.replaceChildren(...listItems.map(item => {
+            const clone = document.importNode(itemTemplate, true)
+
+            clone.querySelector('.emoji').innerText = favoriteItems[item] || mapToEmoji(item)
+            clone.querySelector('.name').innerText = item
+
+            const btn = clone.querySelector('button')
+
+            btn.onclick = (e) => {
+                btn.classList.add('fade-out')
+                setTimeout(() => removeItem(item), 333)
+            }
+
+            btn.ontouchstart = ev => {
+                btn.dataset.startx = ev.touches[0].screenX
+                btn.dataset.distance = 0
+            }
+            btn.ontouchmove = ev => {
+                btn.dataset.distance = ev.touches[0].screenX - btn.dataset.startx
+                btn.style.marginLeft = btn.dataset.distance + 'px'
+            }
+            btn.ontouchend = ev => {
+                if (Math.abs(btn.dataset.distance) > 150) {
+                    btn.classList.add('fade-out')
+                    setTimeout(() => removeItem(item), 333)
+                } else
+                    btn.style.marginLeft = ''
+            }
+
+            return clone
+        }))
+    }
+
+    function renderFavItems() {
+        const itemTemplate = document.getElementById("favitem-template").content
+        const itemsList = document.getElementById('favitems')
+
+        const favoritesList = Object.entries(favoriteItems)
+            .toSorted(([name1, emoji1], [name2, emoji2]) => name1.localeCompare(name2))
+
+        itemsList.replaceChildren(...favoritesList.map(([name, emoji]) => {
+            const clone = document.importNode(itemTemplate, true)
+            if (listItems.includes(name))
+                clone.querySelector('button').classList.add('selected')
+            clone.querySelector('button').onclick = async () => {
+                const oldHeight = document.body.scrollHeight
+                const oldScroll = document.querySelector('html').scrollTop
+
+                await (listItems.includes(name) ? removeItem(name) : addItem(name))
+                window.scrollTo(0, oldScroll + document.body.scrollHeight - oldHeight)
+            }
+            clone.querySelector('.name').innerText = name
+            clone.querySelector('.emoji').innerText = emoji
+            return clone
+        }))
+
+        document.getElementById('datalist1').replaceChildren(...favoritesList.map(([name, emoji]) => {
+            const option = document.createElement('option')
+            option.innerText = name
+            return option
+        }))
+    }
+
+    async function addItemFromInput(event) {
+        event.preventDefault()
+        await addItem(event.target.elements.itemname.value)
+        event.target.elements.itemname.value = ''
+    }
+
+    async function addItem(item) {
+        const res = await fetch('items/' + encodeURIComponent(item), { method: 'POST' })
+        if (!res.ok) alert(await res.text())
+        else {
+            listItems = (await res.text()).split(/\r?\n/).filter(itm => !!itm)
+            renderListItems()
+            renderFavItems()
+        }
+    }
+    async function removeItem(item) {
+        const res = await fetch('items/' + encodeURIComponent(item), { method: 'DELETE' })
+        if (!res.ok) alert(await res.text())
+        else {
+            listItems = (await res.text()).split(/\r?\n/).filter(itm => !!itm)
+            renderListItems()
+            renderFavItems()
+        }
+    }
+
+    window.onload = async () => {
+        await Promise.all([loadItems(), loadFavorites()])
+        renderListItems()
+        renderFavItems()
+    }
+    document.onvisibilitychange = () => {
+        if (document.visibilityState === 'visible') {
+            loadItems()
+            renderListItems()
+            renderFavItems()
+        }
+    }
+</script>
+
+</html>
