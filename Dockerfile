@@ -9,13 +9,14 @@ RUN cargo build --release && \
 
 FROM scratch
 
+WORKDIR /
 EXPOSE 8080/tcp
 
 # provide example data if no volume is mounted
 COPY data /data
 VOLUME [ "/data" ]
-WORKDIR /data
 
-COPY --from=executable_builder --chmod=0555 --chown=0:0 /usr/src/app/target/release/risto /bin/risto
+COPY --from=executable_builder --chmod=0555 --chown=0:0 /usr/src/app/target/release/risto /risto
+COPY --chmod=0444 www /www
 
-CMD [ "/bin/risto" ]
+CMD [ "/risto" ]

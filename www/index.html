@@ -250,7 +250,7 @@
     let listItems = []
 
     async function loadFavorites() {
-        const res = await fetch('favorites')
+        const res = await fetch('favorites.json')
         if (!res.ok) alert(await res.text())
         else {
             favoriteItems = await res.json()
