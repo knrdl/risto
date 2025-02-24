@@ -1,5 +1,5 @@
 # platform parameter fixes https://github.com/docker/buildx/issues/395
-FROM --platform=${BUILDPLATFORM:-linux/amd64} rust:1.84.1-alpine AS executable_builder
+FROM --platform=${BUILDPLATFORM:-linux/amd64} rust:1.85.0-alpine AS executable_builder
 
 WORKDIR /usr/src/app
 COPY . .
